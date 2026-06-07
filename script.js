@@ -46,31 +46,33 @@ function dodajKsiazke() {
 }
 
 function pobierzKsiazki() {
-    fetch(url + "/rest/v1/ksiazki?select=*")
-        .then(res => {
-            if (!res.ok) {
-                throw new Error("Błąd pobierania: " + res.status);
-            }
-            return res.json();
-        })
-        .then(data => {
-            const lista = document.getElementById("listaKsiazek");
-            lista.innerHTML = "";
-
-            data.forEach(ksiazka => {
-                const li = document.createElement("li");
-                li.textContent = ksiazka.tytul;
-
-                li.addEventListener("click", () => {
-                    pokazSzczegoly(ksiazka);
-                });
-
-                lista.appendChild(li);
+    fetch(url + "/rest/v1/ksiazki?select=*", {
+        headers: {
+            "apikey": key,
+            "Authorization": "Bearer " + key
+        }
+    })
+    .then(res => {
+        if (!res.ok) {
+            throw new Error("Błąd pobierania: " + res.status);
+        }
+        return res.json();
+    })
+    .then(data => {
+        const lista = document.getElementById("listaKsiazek");
+        lista.innerHTML = "";
+        data.forEach(ksiazka => {
+            const li = document.createElement("li");
+            li.textContent = ksiazka.tytul;
+            li.addEventListener("click", () => {
+                pokazSzczegoly(ksiazka);
             });
-        })
-        .catch(err => {
-            console.error(err);
+            lista.appendChild(li);
         });
+    })
+    .catch(err => {
+        console.error(err);
+    });
 }
 
 function pokazSzczegoly(ksiazka) {
