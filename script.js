@@ -104,3 +104,36 @@ function filtrujKsiazki() {
         }
     });
 }
+
+const li = document.createElement("li");
+
+li.innerHTML = `
+    ${ksiazka.tytul}
+    <button class="usun">Usuń</button>
+`;
+
+li.querySelector(".usun").addEventListener("click", (e) => {
+    e.stopPropagation();
+    usunKsiazke(ksiazka.id);
+});
+
+function usunKsiazke(id) {
+    fetch(url + "/rest/v1/ksiazki?id=eq." + id, {
+        method: "DELETE",
+        headers: {
+            "apikey": key,
+            "Authorization": "Bearer " + key
+        }
+    })
+    .then(res => {
+        if (!res.ok) {
+            throw new Error("Błąd usuwania");
+        }
+
+        pobierzKsiazki();
+
+        document.getElementById("szczegolyKsiazki").innerHTML =
+            "Wybierz książkę z listy.";
+    })
+    .catch(err => console.error(err));
+}
