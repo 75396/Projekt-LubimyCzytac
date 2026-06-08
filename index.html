@@ -8,9 +8,9 @@
 </head>
 <body>
     <h1>Biblioteka</h1>
+    
     <section>
         <h2>Dodaj książkę</h2>
-
         <label for="tytul">Tytuł:</label>
         <input type="text" id="tytul">
 
@@ -22,11 +22,13 @@
 
         <button id="dodajKsiazke">Dodaj książkę</button>
     </section>
+    
     <section>
         <input type="text" id="wyszukiwarka" placeholder="Szukaj książki...">
         <h2>Lista książek</h2>
         <ul id="listaKsiazek"></ul>
     </section>
+    
    <section>
     <h2>Szczegóły książki</h2>
     <div id="szczegolyKsiazki">
@@ -35,6 +37,20 @@
     <button id="usunKsiazke" style="display:none;">
         Usuń książkę
     </button>
+       <h3>Opinie użytkowników</h3>
+<div id="opinie">
+    Brak opinii.
+</div>
+<h3>Dodaj opinię</h3>
+<input type="text" id="autorOpinii" placeholder="Twoje imię">
+<textarea
+    id="trescOpinii"
+    placeholder="Napisz opinię..."
+></textarea>
+<button id="dodajOpinie">
+    Dodaj opinię
+</button>
+       
 </section>
     <script src="script.js"></script>
 </body>
