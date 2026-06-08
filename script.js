@@ -89,3 +89,18 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("dodajKsiazke").addEventListener("click", dodajKsiazke);
     pobierzKsiazki();
 });
+
+document.getElementById("wyszukiwarka").addEventListener("input", filtrujKsiazki);
+
+function filtrujKsiazki() {
+    const fraza = document.getElementById("wyszukiwarka").value.toLowerCase();
+    const elementy = document.querySelectorAll("#listaKsiazek li");
+
+    elementy.forEach(li => {
+        if (li.textContent.toLowerCase().includes(fraza)) {
+            li.style.display = "";
+        } else {
+            li.style.display = "none";
+        }
+    });
+}
