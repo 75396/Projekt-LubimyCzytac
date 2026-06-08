@@ -1,5 +1,6 @@
 const url = "https://mdsgflidcatnbqznrzvc.supabase.co";
 const key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1kc2dmbGlkY2F0bmJxem5yenZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4MzgzOTcsImV4cCI6MjA5NjQxNDM5N30.VmsuMtctCyC79TcdbCTQT3kt6HgZ-O23GzM3OKsGzqg";
+let wybranaKsiazka = null;
 
 function dodajKsiazke() {
     const tytul = document.getElementById("tytul").value;
@@ -76,13 +77,15 @@ function pobierzKsiazki() {
 }
 
 function pokazSzczegoly(ksiazka) {
+    wybranaKsiazka = ksiazka;
     const div = document.getElementById("szczegolyKsiazki");
-
     div.innerHTML = `
         <h3>${ksiazka.tytul}</h3>
         <p><strong>Autor:</strong> ${ksiazka.autor}</p>
         <p><strong>Rok wydania:</strong> ${ksiazka.rok}</p>
+        <p><strong>Opinia:</strong> ${ksiazka.opinia || "Brak opinii"}</p>
     `;
+    document.getElementById("usunKsiazke").style.display = "block";
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -105,20 +108,10 @@ function filtrujKsiazki() {
     });
 }
 
-const li = document.createElement("li");
+function usunKsiazke() {
+    if (!wybranaKsiazka) return;
 
-li.innerHTML = `
-    ${ksiazka.tytul}
-    <button class="usun">Usuń</button>
-`;
-
-li.querySelector(".usun").addEventListener("click", (e) => {
-    e.stopPropagation();
-    usunKsiazke(ksiazka.id);
-});
-
-function usunKsiazke(id) {
-    fetch(url + "/rest/v1/ksiazki?id=eq." + id, {
+    fetch(url + "/rest/v1/ksiazki?id=eq." + wybranaKsiazka.id, {
         method: "DELETE",
         headers: {
             "apikey": key,
@@ -129,11 +122,16 @@ function usunKsiazke(id) {
         if (!res.ok) {
             throw new Error("Błąd usuwania");
         }
-
-        pobierzKsiazki();
-
+        wybranaKsiazka = null;
         document.getElementById("szczegolyKsiazki").innerHTML =
             "Wybierz książkę z listy.";
+        document.getElementById("usunKsiazke").style.display = "none";
+        pobierzKsiazki();
     })
-    .catch(err => console.error(err));
+    .catch(err => {
+        console.error(err);
+    });
 }
+
+document.getElementById("usunKsiazke")
+    .addEventListener("click", usunKsiazke);
