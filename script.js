@@ -83,9 +83,9 @@ function pokazSzczegoly(ksiazka) {
         <h3>${ksiazka.tytul}</h3>
         <p><strong>Autor:</strong> ${ksiazka.autor}</p>
         <p><strong>Rok wydania:</strong> ${ksiazka.rok}</p>
-        <p><strong>Opinia:</strong> ${ksiazka.opinia || "Brak opinii"}</p>
     `;
     document.getElementById("usunKsiazke").style.display = "block";
+    pobierzOpinie(ksiazka.id);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -135,3 +135,79 @@ function usunKsiazke() {
 
 document.getElementById("usunKsiazke")
     .addEventListener("click", usunKsiazke);
+
+function pobierzOpinie(idKsiazki) {
+    fetch(
+        url +
+        "/rest/v1/opinie?ksiazka_id=eq." +
+        idKsiazki +
+        "&select=*",
+        {
+            headers: {
+                apikey: key,
+                Authorization: "Bearer " + key
+            }
+        }
+    )
+    .then(res => res.json())
+    .then(data => {
+        const kontener = document.getElementById("opinie");
+        if (data.length === 0) {
+            kontener.innerHTML = "Brak opinii.";
+            return;
+        }
+        kontener.innerHTML = "";
+        data.forEach(opinia => {
+            kontener.innerHTML += `
+                <div class="opinia">
+                    <strong>${opinia.autor}</strong>
+                    <p>${opinia.tresc}</p>
+                </div>
+            `;
+        });
+
+    });
+}
+
+function dodajOpinie() {
+    if (!wybranaKsiazka) {
+        alert("Najpierw wybierz książkę.");
+        return;
+    }
+    const autor =
+        document.getElementById("autorOpinii").value;
+
+    const tresc =
+        document.getElementById("trescOpinii").value;
+
+    const dane = {
+        ksiazka_id: wybranaKsiazka.id,
+        autor: autor,
+        tresc: tresc
+    };
+    fetch(url + "/rest/v1/opinie", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            apikey: key,
+            Authorization: "Bearer " + key
+        },
+        body: JSON.stringify(dane)
+    })
+    .then(res => {
+        if (!res.ok) {
+            throw new Error("Błąd dodawania opinii");
+        }
+        return res.text();
+    })
+    .then(() => {
+        document.getElementById("autorOpinii").value = "";
+        document.getElementById("trescOpinii").value = "";
+        pobierzOpinie(wybranaKsiazka.id);
+    })
+    .catch(console.error);
+}
+
+document
+    .getElementById("dodajOpinie")
+    .addEventListener("click", dodajOpinie);
